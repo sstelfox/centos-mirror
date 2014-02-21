@@ -24,14 +24,14 @@ rsync --progress -h -av --delete --delete-excluded --exclude "SRPMS" \
   rsync://yum.postgresql.org/pgrpm-93/ ./repo/postgresql/9.3/
 
 if [ ! -f RPM-GPG-KEY-PGDG-93 ]; then
-  wget http://yum.postgresql.org/RPM-GPG-KEY-PGDG-93 -O RPM-GPG-KEY-PGDG-93
+  wget http://yum.postgresql.org/RPM-GPG-KEY-PGDG-93 -O RPM-GPG-KEY-PGDG-93 &> /dev/null
 fi
 
 if [ ! -f RPM-GPG-KEY-elrepo.org ]; then
-  wget https://www.elrepo.org/RPM-GPG-KEY-elrepo.org -O RPM-GPG-KEY-elrepo.org
+  wget https://www.elrepo.org/RPM-GPG-KEY-elrepo.org -O RPM-GPG-KEY-elrepo.org &> /dev/null
 fi
 
 if [ ! -f RPM-GPG-KEY-puppetlabs ]; then
-  wget https://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs -O RPM-GPG-KEY-puppetlabs
+  wget https://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs -O RPM-GPG-KEY-puppetlabs &> /dev/null
 fi
 
