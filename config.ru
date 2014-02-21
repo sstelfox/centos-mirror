@@ -49,7 +49,7 @@ class Host
       }))
     end
 
-    File.unlink("passwords/latest.json")
+    File.unlink("passwords/latest.json") if File.exists?("passwords/latest.json")
     File.symlink(file_name, "passwords/latest.json")
   end
 end
