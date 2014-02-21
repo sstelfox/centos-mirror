@@ -128,6 +128,8 @@ reboot
 %end
 
 %post --log=/root/ks-post.log
+rm -f /etc/yum.repos.d/*
+
 cat > /etc/yum.repos.d/local.repo << EOF
 [local-base]
 name=Local CentOS-$releasever - Base
