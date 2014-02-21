@@ -209,6 +209,9 @@ EOR
 
 for escrow_name in $(echo /root/*escrow*); do
   cat $escrow_name | base64 -w 0 | curl -X PUT -d @- 'http://10.64.89.1:3000/escrow_update?name='${escrow_name}'&host='$(hostname) &> /dev/null
+  if [ $? ]; then
+    rm -f $escrow_name
+  fi
 done
 
 %end
