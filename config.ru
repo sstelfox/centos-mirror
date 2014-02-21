@@ -56,7 +56,7 @@ get '/default-ks.cfg' do
   mac = request.env.to_h['HTTP_X_RHN_PROVISIONING_MAC_0']
   mac = mac.split[1].downcase.gsub(':', '') if mac
 
-  os = (request.env.to_h['HTTP_X_ANACONDA_SYSTEM_RELEASE'] || 'unknown')
+  os = (request.env.to_h['HTTP_X_ANACONDA_SYSTEM_RELEASE'] || 'unknown').downcase
   hostname = ([os, mac].join('-')) + '.cent.0x378.net'
 
   puts JSON.pretty_generate(request.env.to_h)
@@ -125,6 +125,48 @@ reboot
 
 %packages --nobase
 @core
+%end
+
+%post --log=/root/ks-post.log
+cat > /etc/yum.repos.d/local.repo << EOF
+[local-base]
+name=Local CentOS-$releasever - Base
+baseurl=http://10.64.89.1:3000/repo/centos/6.5/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+[local-updates]
+name=Local CentOS-$releasever - Updates
+baseurl=http://10.64.89.1:3000/repo/centos/6.5/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+[local-extras]
+name=Local CentOS-$releasever - Extras
+baseurl=http://10.64.89.1:3000/repo/centos/6.5/extras/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+[local-centosplus]
+name=Local CentOS-$releasever - Plus
+baseurl=http://10.64.89.1:3000/repo/centos/6.5/centosplus/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+[local-contrib]
+name=Local CentOS-$releasever - Contrib
+baseurl=http://10.64.89.1:3000/repo/centos/6.5/contrib/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+[local-elrepo]
+name=Local ELRepo.org Community Enterprise Linux Repository - el6
+baseurl=http://10.64.89.1:3000/repo/epel/6/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
+protect=0
+EOF
 %end
   EOF
 end
