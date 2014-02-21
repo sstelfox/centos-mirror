@@ -23,3 +23,15 @@ rsync --progress -h -av --delete --delete-excluded --exclude "SRPMS" \
   --exclude="fedora*" --exclude="rhel-5*" \
   rsync://yum.postgresql.org/pgrpm-93/ ./repo/postgresql/9.3/
 
+if [ ! -f RPM-GPG-KEY-PGDG-93 ]; then
+  wget http://yum.postgresql.org/RPM-GPG-KEY-PGDG-93 -O RPM-GPG-KEY-PGDG-93
+fi
+
+if [ ! -f RPM-GPG-KEY-elrepo.org ]; then
+  wget https://www.elrepo.org/RPM-GPG-KEY-elrepo.org -O RPM-GPG-KEY-elrepo.org
+fi
+
+if [ ! -f RPM-GPG-KEY-puppetlabs ]; then
+  wget https://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs -O RPM-GPG-KEY-puppetlabs
+fi
+
