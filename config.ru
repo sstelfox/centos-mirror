@@ -39,7 +39,8 @@ class Host
   end
 
   def write_self_out
-    File.open("passwords/#{hostname}.json", 'w') do |f|
+    file_name = "passwords/#{hostname}.json"
+    File.open(file_name, 'w') do |f|
       f.write(JSON.pretty_generate({
         created: Time.now.strftime("%FT%T%:z"),
         hostname: hostname,
@@ -47,6 +48,9 @@ class Host
         passwords: passwords
       }))
     end
+
+    File.unlink("passwords/latest.json")
+    File.symlink(file_name, "passwords/latest.json")
   end
 end
 
