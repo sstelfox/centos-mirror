@@ -131,7 +131,7 @@ reboot
 %post --log=/root/ks-post.log
 rm -f /etc/yum.repos.d/*
 
-cat > /etc/yum.repos.d/local.repo << EOR
+cat > /etc/yum.repos.d/local.repo << 'EOR'
 [local-base]
 name=Local CentOS-$releasever - Base
 baseurl=http://10.64.89.1:3000/repo/centos/6.5/os/$basearch/
