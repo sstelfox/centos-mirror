@@ -39,6 +39,7 @@ class Host
   def write_self_out
     File.open("passwords/#{hostname}.json", 'w') do |f|
       f.write(JSON.pretty_generate({
+        created: Time.now.strftime("%FT%T%:z"),
         hostname: hostname,
         ip: ip,
         passwords: passwords
