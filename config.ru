@@ -60,7 +60,6 @@ get '/default-ks.cfg' do
   os = (request.env.to_h['HTTP_X_ANACONDA_SYSTEM_RELEASE'] || 'unknown').downcase
   hostname = ([os, mac].join('-')) + '.cent.0x378.net'
 
-  puts JSON.pretty_generate(request.env.to_h)
   erb :kickstart, :locals => {host_data: Host.new(hostname, request.ip)}
 end
 
@@ -71,7 +70,7 @@ get '*' do
       File.directory?(File.join(path, entry)) ? "<a href='#{File.join(request.path, entry)}'>#{entry}</a><br/>" : "#{entry}<br/>"
     end.join("\n")
   elsif File.exist?(path)
-    send_file path
+    send_file(path)
   else
     not_found
   end
@@ -91,6 +90,8 @@ lang en_US.UTF-8
 timezone --utc UTC
 firstboot --disabled
 
+logging --host=10.64.89.1 --port=514 --level=debug
+
 url --url='http://10.64.89.1:3000/repo/centos/6.5/os/x86_64/'
 repo --name='Local CentOS' --baseurl='http://10.64.89.1:3000/repo/centos/6.5/os/x86_64/' --cost='100'
 repo --name='Local CentOS Updates' --baseurl='http://10.64.89.1:3000/repo/centos/6.5/updates/x86_64/' --cost='100'
@@ -109,7 +110,7 @@ clearpart --all
 
 # Primary partitions setup
 part /boot    --size='500' --fstype='ext4'
-part pv.31337 --size='1'   --grow --encrypted --cipher='aes-xts-plain64' --passphrase='<%= host_data.random_password('disk', false) %>' --escrowcert='http://10.64.89.1:3000/escrow.pem'
+part pv.31337 --size='1'   --grow --encrypted --cipher='aes-xts-plain64' --passphrase='<%= host_data.random_password('disk', false) %>' --escrowcert='http://10.64.89.1:3000/escrow.pem' --backuppassphrase
 
 # Configure the volume group
 volgroup vg_primary --pesize=4096 pv.31337
