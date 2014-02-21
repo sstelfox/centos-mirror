@@ -191,6 +191,20 @@ enabled=1
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
 protect=0
+
+[local-puppetlabs-products]
+name=Local Puppet Labs Products El 6 - $basearch
+baseurl=http://10.64.89.1:3000/repo/puppet/yum/el/6/products/$basearch
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs
+enabled=1
+gpgcheck=1
+
+[local-puppetlabs-deps]
+name=Local Puppet Labs Dependencies El 6 - $basearch
+baseurl=http://10.64.89.1:3000/repo/puppet/yum/el/6/dependencies/$basearch
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs
+enabled=1
+gpgcheck=1
 EOR
 
 for escrow_name in $(echo /root/*escrow*); do
