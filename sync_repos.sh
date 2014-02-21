@@ -17,3 +17,9 @@ rsync --progress -h -avxH --exclude "apt*" --exclude "i386" --exclude "SRPMS" \
   --prune-empty-dirs --delete --delete-excluded \
   rsync://yum.puppetlabs.com/packages/ ./repo/puppet/
 
+mkdir -p ./repo/postgresql/9.3/
+rsync --progress -h -av --delete --delete-excluded --exclude "SRPMS" \
+  --exclude="ppc64" --exclude "local*" --exclude "isos" --exclude "*i386" \
+  --exclude="fedora*" --exclude="rhel-5*" \
+  rsync://yum.postgresql.org/pgrpm-93/ ./repo/postgresql/9.3/
+

@@ -159,30 +159,35 @@ name=Local CentOS-$releasever - Base
 baseurl=http://10.64.89.1:3000/repo/centos/6.5/os/$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+exclude=postgresql*
 
 [local-updates]
 name=Local CentOS-$releasever - Updates
 baseurl=http://10.64.89.1:3000/repo/centos/6.5/updates/$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+exclude=postgresql*
 
 [local-extras]
 name=Local CentOS-$releasever - Extras
 baseurl=http://10.64.89.1:3000/repo/centos/6.5/extras/$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+exclude=postgresql*
 
 [local-centosplus]
 name=Local CentOS-$releasever - Plus
 baseurl=http://10.64.89.1:3000/repo/centos/6.5/centosplus/$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+exclude=postgresql*
 
 [local-contrib]
 name=Local CentOS-$releasever - Contrib
 baseurl=http://10.64.89.1:3000/repo/centos/6.5/contrib/$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+exclude=postgresql*
 
 [local-elrepo]
 name=Local ELRepo.org Community Enterprise Linux Repository - el6
@@ -191,6 +196,7 @@ enabled=1
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
 protect=0
+exclude=postgresql*
 
 [local-puppetlabs-products]
 name=Local Puppet Labs Products El 6 - $basearch
@@ -198,6 +204,7 @@ baseurl=http://10.64.89.1:3000/repo/puppet/yum/el/6/products/$basearch
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs
 enabled=1
 gpgcheck=1
+exclude=postgresql*
 
 [local-puppetlabs-deps]
 name=Local Puppet Labs Dependencies El 6 - $basearch
@@ -205,6 +212,15 @@ baseurl=http://10.64.89.1:3000/repo/puppet/yum/el/6/dependencies/$basearch
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs
 enabled=1
 gpgcheck=1
+exclude=postgresql*
+
+[local-pgdg93]
+name=Local PostgreSQL 9.3 $releasever - $basearch
+baseurl=http://10.64.89.1:3000/repo/postgresql/9.3/redhat/rhel-$releasever-$basearch
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG-93
+
 EOR
 
 for escrow_name in $(echo /root/*escrow*); do
