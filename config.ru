@@ -92,6 +92,7 @@ firstboot --disabled
 
 url --url='http://10.64.89.1:3000/repo/centos/6.5/os/x86_64/'
 repo --name='Local CentOS' --baseurl='http://10.64.89.1:3000/repo/centos/6.5/os/x86_64/' --cost='100'
+repo --name='Local CentOS Updates' --baseurl='http://10.64.89.1:3000/repo/centos/6.5/updates/x86_64/' --cost='100'
 
 network --onboot yes --device eth0 --bootproto dhcp --ipv6 auto --hostname='<%= host_data.hostname %>'
 auth --enableshadow --passalgo='sha512'
