@@ -3,6 +3,8 @@ require 'json'
 require 'securerandom'
 require 'sinatra'
 
+JSON.create_id = nil
+
 set :environment, :production
 set :public_folder, File.expand_path('.')
 
@@ -61,6 +63,23 @@ get '/default-ks.cfg' do
   hostname = ([os, mac].join('-')) + '.cent.0x378.net'
 
   erb :kickstart, :locals => {host_data: Host.new(hostname, request.ip)}
+end
+
+put '/escrow_update' do
+  return [400, "Missing required parameter."] unless params[:name] && params[:host]
+  file_name = "./passwords/#{params[:host]}.json"
+  return [404, "Host doesn't exist."] unless File.exists?(file_name)
+
+  host = JSON.parse(File.read(file_name), symbolize_names: true)
+
+  return [403, "Only host can update it's own record."] unless request.ip == host[:ip]
+
+  host[:escrows] ||= {}
+  host[:escrows][File.basename(params[:name])] = request.body.read
+
+  content = JSON.pretty_generate(host)
+  File.write(file_name, content)
+  content
 end
 
 get '*' do
@@ -173,6 +192,11 @@ gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
 protect=0
 EOR
+
+for escrow_name in $(echo /root/*escrow*); do
+  cat $escrow_name | base64 -w 0 | curl -X PUT -d @- 'http://10.64.89.1:3000/escrow_update?name='${escrow_name}'&host='$(hostname) &> /dev/null
+done
+
 %end
   EOF
 end
