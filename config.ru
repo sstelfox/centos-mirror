@@ -1,0 +1,130 @@
+
+require 'json'
+require 'securerandom'
+require 'sinatra'
+
+set :environment, :production
+set :public_folder, File.expand_path('.')
+
+class Host
+  attr_reader :hostname, :passwords, :ip
+
+  def initialize(hostname, ip)
+    @hostname = hostname
+    @ip = ip
+    @passwords = {}
+  end
+
+  def random_password(name, hash = false)
+    pass = @passwords[name] = gen_pass
+    write_self_out
+    hash ? crypt(pass) : pass
+  end
+
+  protected
+
+  def crypt(str)
+    str.crypt('$6$' + SecureRandom.random_number(36 ** 8).to_s(36))
+  end
+
+  def gen_pass(length = 32)
+    character_set = [('a'..'z'), ('A'..'Z'), (0..9)].map(&:to_a).flatten.map(&:to_s)
+
+    ambiguous_characters = %w{ O 0 l I 1 |}
+    character_set.delete_if { |c| ambiguous_characters.include?(c) }
+
+    length.times.map { character_set[rand(character_set.length)].to_s }.join
+  end
+
+  def write_self_out
+    File.open("passwords/#{hostname}.json", 'w') do |f|
+      f.write(JSON.pretty_generate({
+        hostname: hostname,
+        ip: ip,
+        passwords: passwords
+      }))
+    end
+  end
+end
+
+unless File.exist?('escrow.pem')
+  `echo -e "XX\n\n \n \n\n*\n\n" | openssl req -new -x509 -newkey rsa:4096 -keyout ./escrow.key -nodes -days 365 -out ./escrow.pem &> /dev/null`
+  `chmod 0000 escrow.key`
+end
+
+get '/default-ks.cfg' do
+  mac = request.env.to_h['HTTP_X_RHN_PROVISIONING_MAC_0']
+  mac = mac.split[1].downcase.gsub(':', '') if mac
+
+  os = (request.env.to_h['HTTP_X_ANACONDA_SYSTEM_RELEASE'] || 'unknown')
+  hostname = ([os, mac].join('-')) + '.cent.0x378.net'
+
+  puts JSON.pretty_generate(request.env.to_h)
+  erb :kickstart, :locals => {host_data: Host.new(hostname, request.ip)}
+end
+
+get '*' do
+  path = File.join(settings.public_folder, URI.unescape(request.path))
+  if File.directory?(path)
+    Dir.foreach(path).map do |entry|
+      File.directory?(File.join(path, entry)) ? "<a href='#{File.join(request.path, entry)}'>#{entry}</a><br/>" : "#{entry}<br/>"
+    end.join("\n")
+  elsif File.exist?(path)
+    send_file path
+  else
+    not_found
+  end
+end
+
+run Sinatra::Application
+
+template :kickstart do
+  <<-EOF
+# version = Production
+
+install
+text
+
+keyboard us
+lang en_US.UTF-8
+timezone --utc UTC
+firstboot --disabled
+
+url --url='http://10.64.89.1:3000/repo/centos/6.5/os/x86_64/'
+repo --name='Local CentOS' --baseurl='http://10.64.89.1:3000/repo/centos/6.5/os/x86_64/' --cost='100'
+
+network --onboot yes --device eth0 --bootproto dhcp --ipv6 auto --hostname='<%= host_data.hostname %>'
+auth --enableshadow --passalgo='sha512'
+selinux --enforcing
+firewall --service='ssh'
+
+rootpw  --iscrypted <%= host_data.random_password('root', true) %>
+bootloader --location='mbr' --driveorder='vda' --append='crashkernel=auto console=ttyS0' --password='<%= host_data.random_password('bootloader', true) %>'
+
+#ignoredisk --only-use='vda'
+clearpart --all
+
+# Primary partitions setup
+part /boot    --size='500' --fstype='ext4'
+part pv.31337 --size='1'   --grow --encrypted --cipher='aes-xts-plain64' --passphrase='<%= host_data.random_password('disk', false) %>'
+
+# Configure the volume group
+volgroup vg_primary --pesize=4096 pv.31337
+
+# And all the partitions within the volume group, minimum disk size is 10Gb,
+# more is recommended.
+logvol swap           --name=lv_swap   --vgname=vg_primary --size=1024
+logvol /              --name=lv_root   --vgname=vg_primary --size=4096 --fstype=ext4
+logvol /home          --name=lv_home   --vgname=vg_primary --size=1024 --fstype=ext4
+logvol /tmp           --name=lv_tmp    --vgname=vg_primary --size=1024 --fstype=ext4
+logvol /var/log/audit --name=lv_audit  --vgname=vg_primary --size=1024 --fstype=ext4
+logvol /var/log       --name=lv_varlog --vgname=vg_primary --size=1024 --fstype=ext4
+logvol /var           --name=lv_var    --vgname=vg_primary --size=1024 --fstype=ext4 --grow
+
+reboot
+
+%packages --nobase
+@core
+%end
+  EOF
+end
