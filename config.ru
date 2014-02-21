@@ -1,4 +1,5 @@
 
+require 'fileutils'
 require 'json'
 require 'securerandom'
 require 'sinatra'
@@ -39,7 +40,8 @@ class Host
   end
 
   def write_self_out
-    file_name = "passwords/#{hostname}.json"
+    file_name = File.expand_path("./passwords/#{hostname}.json")
+
     File.open(file_name, 'w') do |f|
       f.write(JSON.pretty_generate({
         created: Time.now.strftime("%FT%T%:z"),
@@ -49,8 +51,7 @@ class Host
       }))
     end
 
-    File.unlink("passwords/latest.json") if File.exists?("passwords/latest.json")
-    File.symlink(file_name, "passwords/latest.json")
+    FileUtils.ln_s(file_name, "passwords/latest.json", :force => true)
   end
 end
 
