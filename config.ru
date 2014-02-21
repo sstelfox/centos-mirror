@@ -109,7 +109,7 @@ clearpart --all
 
 # Primary partitions setup
 part /boot    --size='500' --fstype='ext4'
-part pv.31337 --size='1'   --grow --encrypted --cipher='aes-xts-plain64' --passphrase='<%= host_data.random_password('disk', false) %>'
+part pv.31337 --size='1'   --grow --encrypted --cipher='aes-xts-plain64' --passphrase='<%= host_data.random_password('disk', false) %>' --escrowcert='http://10.64.89.1:3000/escrow.pem'
 
 # Configure the volume group
 volgroup vg_primary --pesize=4096 pv.31337
