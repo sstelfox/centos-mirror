@@ -101,7 +101,8 @@ firewall --service='ssh'
 rootpw  --iscrypted <%= host_data.random_password('root', true) %>
 bootloader --location='mbr' --driveorder='vda' --append='crashkernel=auto console=ttyS0' --password='<%= host_data.random_password('bootloader', true) %>'
 
-#ignoredisk --only-use='vda'
+zerombr
+ignoredisk --only-use='vda'
 clearpart --all
 
 # Primary partitions setup
@@ -130,7 +131,7 @@ reboot
 %post --log=/root/ks-post.log
 rm -f /etc/yum.repos.d/*
 
-cat > /etc/yum.repos.d/local.repo << EOF
+cat > /etc/yum.repos.d/local.repo << EOR
 [local-base]
 name=Local CentOS-$releasever - Base
 baseurl=http://10.64.89.1:3000/repo/centos/6.5/os/$basearch/
@@ -168,7 +169,7 @@ enabled=1
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
 protect=0
-EOF
+EOR
 %end
   EOF
 end
