@@ -1,7 +1,7 @@
 # Auto CentOS Mirror
 
 I use this repository when I want to setup and test various server
-configurations whlie travelling.
+configurations while travelling (such as on a plane).
 
 The `sync_repos.sh` script was pulled straight from my production repository
 mirror though I've added a few excludes to keep it as small as necessary
