@@ -1,4 +1,3 @@
-
 # Auto CentOS Mirror
 
 I use this repository when I want to setup and test various server
