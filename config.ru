@@ -238,6 +238,14 @@ for escrow_name in $(echo /root/*escrow*); do
   fi
 done
 
+mkdir -p /root/.ssh/
+chmod 0600 /root/.ssh
+chown root:root /root/.ssh
+cat > /root/.ssh/authorized_keys << EOK
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDXUDvlxSdKo7ZkdQGnAeccgSeb+/VnMxI9Nj0gVpjckyaWI8rPOI8CeMVwz4yi6RCmyCovwVY2kNwp6DVql/fqv9WTMl75Ckpq89Y96VfO3btzw4ktJhGWWXdlZO8UcfMqNgWGBLF3KeFJe1Kzkf8OOxugC86AJzXbPLvXiJ3JYh6RgnW2DThzLEo+WdV6oI0IwFKMKXx4IKuC3HhGs9T1xuTVUoUEuxl3aIxDDmeValtPKHxEkMx02oVBR9l0QF958ehtk9/ir9mqSpvc0aHxs+xdWE35R39D649elRlnYyZxx/Hb/9Pb76mtI9mYtcOBB39g3kjv0QqJUJdNjgfHfFTdTY0w7JHaLDT3MubNwvW2cFfdxy0gI8Ucfxi4io+zgUP2UEnTax4uXbyXcy2L6W1TFP4lK8akhDkYe9sFSpcCkZfT68c8SQCDit20Mml9bpCkJg4AX2/OMc7vVvsdcfF/5MZdrZQXbdzi8M3V/YoB293mWpu/IL+BjdWgwF3MhQfO8oTZXjBXkaVKufNnoF1chKO4xzXMoA45wOfl6GD1ErLXs7mFsIg2Ulsc7RlAnQuP8QcPACZ2Gu7o7TcFO3HvhjrK9wqjLyK1sgqATwn8Uo/zTkVLmMWpMKXgsNVqRVfAhyDat0ASSI7b/daDMr31U+T/xDTByfAXyGj1+Q==
+EOK
+chmod 0600 /root/.ssh/authorized_keys
+
 %end
   EOF
 end
