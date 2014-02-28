@@ -13,5 +13,8 @@ virt-install --connect qemu:///system --name "${NAME}" --ram "${RAM}" \
   --disk="pool=default,size="${DISK_SIZE}",sparse=true,format=qcow2" \
   --network="network=cent" --graphics=none --hvm \
   --virt-type=kvm --accelerate --console=pty --memballoon=virtio --autostart \
-  --check-cpu
+  --check-cpu --noautoconsole
 
+MAC=$(virsh dumpxml "${NAME}" | grep 'mac address' | grep -Eio '[0-9a-f:]{17}')
+
+curl -q -X POST -d "hostname=${NAME} -d "mac=${MAC}" http://127.0.0.1:3000/register

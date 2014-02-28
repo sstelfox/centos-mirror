@@ -65,7 +65,13 @@ get '/default-ks.cfg' do
   mac = mac.split[1].downcase.gsub(':', '') if mac
 
   os = (request.env.to_h['HTTP_X_ANACONDA_SYSTEM_RELEASE'] || 'unknown').downcase
-  hostname = ([os, mac].join('-')) + '.cent.0x378.net'
+
+  if File.exists?("./hosts/#{mac}.json")
+    content = JSON.parse(File.read("./hosts/#{mac}.json"))
+    hostname = "#{content[:hostname]}.cent.0x378.net"
+  else
+    hostname = ([os, mac].join('-')) + '.cent.0x378.net'
+  end
 
   erb :kickstart, :locals => {host_data: Host.new(hostname, request.ip)}
 end
@@ -87,7 +93,22 @@ put '/escrow_update' do
   content
 end
 
+post '/register' do
+  return [400, "Missing required parameter"] unless params[:mac] && params[:hostname]
+
+  content = {
+    ip: request.ip,
+    hostname: params[:hostname],
+    mac: params[:mac].downcase.gsub(':', '')
+  }
+
+  File.write("./hosts/#{content[:mac]}.json", JSON.pretty_generate(content))
+  [200, "Wrote out host"]
+end
+
 get '*' do
+  return [403, "Nice try."] if request.path =~ /\/passwords/
+
   path = File.join(settings.public_folder, URI.unescape(request.path))
   if File.directory?(path)
     Dir.foreach(path).map do |entry|
