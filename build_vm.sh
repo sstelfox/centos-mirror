@@ -1,9 +1,13 @@
 #!/bin/bash
 
+set -o errexit
+set -o errtrace
+set -o nounset
+
 NAME=${1}
-RAM=${2:-512}
-CPUS=${3:-1}
-DISK_SIZE=${4:-15}
+DISK_SIZE=${2:-15}
+RAM=${3:-512}
+CPUS=${4:-1}
 
 virt-install --connect qemu:///system --name "${NAME}" --ram "${RAM}" \
   --arch x86_64 --vcpus "${CPUS}" --security type=dynamic \
@@ -17,4 +21,9 @@ virt-install --connect qemu:///system --name "${NAME}" --ram "${RAM}" \
 
 MAC=$(virsh dumpxml "${NAME}" | grep 'mac address' | grep -Eio '[0-9a-f:]{17}')
 
-curl -q -X POST -d "hostname=${NAME} -d "mac=${MAC}" http://127.0.0.1:3000/register
+curl -q -X POST -d "hostname=${NAME}" -d "mac=${MAC}" http://127.0.0.1:3000/register &> /dev/null
+
+virsh console ${NAME}
+sleep 1
+virsh start ${NAME} --console
+
