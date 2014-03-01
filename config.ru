@@ -67,7 +67,7 @@ get '/default-ks.cfg' do
   os = (request.env.to_h['HTTP_X_ANACONDA_SYSTEM_RELEASE'] || 'unknown').downcase
 
   if File.exists?("./hosts/#{mac}.json")
-    content = JSON.parse(File.read("./hosts/#{mac}.json"))
+    content = JSON.parse(File.read("./hosts/#{mac}.json"), symbolize_names: true)
     hostname = "#{content[:hostname]}.cent.0x378.net"
   else
     hostname = ([os, mac].join('-')) + '.cent.0x378.net'
@@ -96,14 +96,17 @@ end
 post '/register' do
   return [400, "Missing required parameter"] unless params[:mac] && params[:hostname]
 
+  short_mac = params[:mac].downcase.gsub(':', '')
   content = {
     ip: request.ip,
     hostname: params[:hostname],
-    mac: params[:mac].downcase.gsub(':', '')
+    mac: params[:mac]
   }
 
-  File.write("./hosts/#{content[:mac]}.json", JSON.pretty_generate(content))
-  [200, "Wrote out host"]
+  File.write("./hosts/#{short_mac}.json", JSON.pretty_generate(content))
+  FileUtils.ln_s("#{short_mac}.json", "hosts/latest.json", :force => true)
+
+  [200, "Wrote out host."]
 end
 
 get '*' do
@@ -220,14 +223,12 @@ name=Local ELRepo.org Community Enterprise Linux Repository - el6
 baseurl=http://10.64.89.1:3000/repo/epel/6/$basearch/
 enabled=1
 gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
 protect=0
 exclude=postgresql*
 
 [local-puppetlabs-products]
 name=Local Puppet Labs Products El 6 - $basearch
 baseurl=http://10.64.89.1:3000/repo/puppet/yum/el/6/products/$basearch
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs
 enabled=1
 gpgcheck=1
 exclude=postgresql*
@@ -235,7 +236,6 @@ exclude=postgresql*
 [local-puppetlabs-deps]
 name=Local Puppet Labs Dependencies El 6 - $basearch
 baseurl=http://10.64.89.1:3000/repo/puppet/yum/el/6/dependencies/$basearch
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs
 enabled=1
 gpgcheck=1
 exclude=postgresql*
@@ -245,7 +245,6 @@ name=Local PostgreSQL 9.3 $releasever - $basearch
 baseurl=http://10.64.89.1:3000/repo/postgresql/9.3/redhat/rhel-$releasever-$basearch
 enabled=1
 gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG-93
 EOR
 
 rpm --import http://10.64.89.1:3000/RPM-GPG-KEY-PGDG-93
@@ -268,6 +267,10 @@ ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBKNN3/Cw
 EOK
 chmod 0600 /root/.ssh/authorized_keys
 chown root:root /root/.ssh/authorized_keys
+
+yum install augeas puppet -y
+echo '10.64.89.47 puppet-01.cent.0x378.net' >> /etc/hosts
+puppet agent --test --server=puppet-01.cent.0x378.net --waitforcert 30
 
 %end
   EOF
