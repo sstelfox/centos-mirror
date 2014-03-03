@@ -76,6 +76,11 @@ isolated.
 * PuppetLabs Yum Repo
 * PostgreSQL 9.3 CentOS 6 Repo
 
+And coming soon...
+
+* Elastic Search Repo
+* Jenkins Repo
+
 ## Future Work
 
 In the future I may automate the creation of more of my development environment
