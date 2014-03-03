@@ -24,6 +24,10 @@ rsync --progress -h -av --delete --delete-excluded --exclude "SRPMS" \
   --exclude="fedora*" --exclude="rhel-5*" --exclude="*debuginfo*.rpm" \
   rsync://yum.postgresql.org/pgrpm-93/ ./repo/postgresql/9.3/
 
+#mkdir -p ./repo/jenkins/
+#rsync --progress -h -av --delete --delete-excluded \
+#  rsync://pkg.jenkins-ci.org/maven/ ./repo/jenkins/
+
 if [ ! -f RPM-GPG-KEY-PGDG-93 ]; then
   wget http://yum.postgresql.org/RPM-GPG-KEY-PGDG-93 -O RPM-GPG-KEY-PGDG-93 &> /dev/null
 fi
