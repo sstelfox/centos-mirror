@@ -1,0 +1,15 @@
+<network>
+  <name>cent</name>
+  <forward mode='nat'>
+    <nat>
+      <port start='1024' end='65535'/>
+    </nat>
+  </forward>
+  <bridge name='virbr1' stp='off' delay='0' />
+  <ip address='10.64.89.1' netmask='255.255.255.0'>
+    <dhcp>
+      <range start='10.64.89.10' end='10.64.89.254' />
+    </dhcp>
+  </ip>
+</network>
+
