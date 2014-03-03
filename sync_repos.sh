@@ -28,6 +28,13 @@ rsync --progress -h -av --delete --delete-excluded --exclude "SRPMS" \
 #rsync --progress -h -av --delete --delete-excluded \
 #  rsync://pkg.jenkins-ci.org/maven/ ./repo/jenkins/
 
+# The elastic search repository doesn't have rsync and it's pages are all XML
+# based so a simple recursive wget won't do the trick. You can find more
+# information here:
+# http://www.elasticsearch.org/blog/apt-and-yum-repositories/
+#mkdir -p ./repos/elastic_search/
+# http://packages.elasticsearch.org/
+
 if [ ! -f RPM-GPG-KEY-PGDG-93 ]; then
   wget http://yum.postgresql.org/RPM-GPG-KEY-PGDG-93 -O RPM-GPG-KEY-PGDG-93 &> /dev/null
 fi
@@ -39,4 +46,8 @@ fi
 if [ ! -f RPM-GPG-KEY-puppetlabs ]; then
   wget https://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs -O RPM-GPG-KEY-puppetlabs &> /dev/null
 fi
+
+#if [ ! -f GPG-KEY-elasticsearch ]; then
+#  wget http://packages.elasticsearch.org/GPG-KEY-elasticsearch -O GPG-KEY-elasticsearch &> /dev/null
+#fi
 
