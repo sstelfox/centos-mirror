@@ -24,6 +24,8 @@ rsync --progress -h -av --delete --delete-excluded --exclude "SRPMS" \
   --exclude="fedora*" --exclude="rhel-5*" --exclude="*debuginfo*.rpm" \
   rsync://yum.postgresql.org/pgrpm-93/ ./repo/postgresql/9.3/
 
+# This works, however, it syncs way more than we need so I'll need to add some
+# judicious excludes.
 #mkdir -p ./repo/jenkins/
 #rsync --progress -h -av --delete --delete-excluded \
 #  rsync://pkg.jenkins-ci.org/maven/ ./repo/jenkins/
