@@ -154,7 +154,7 @@ bootloader --location='mbr' --driveorder='vda' --append='crashkernel=auto consol
 
 zerombr
 ignoredisk --only-use='vda'
-clearpart --all
+clearpart --all --initlabel
 
 # Primary partitions setup
 part /boot    --size='500' --fstype='ext4'

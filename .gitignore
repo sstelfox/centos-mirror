@@ -3,3 +3,4 @@ escrow.*
 passwords/
 hosts/
 RPM-*
+debug.log

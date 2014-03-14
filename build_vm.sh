@@ -24,6 +24,6 @@ MAC=$(virsh dumpxml "${NAME}" | grep 'mac address' | grep -Eio '[0-9a-f:]{17}')
 curl -q -X POST -d "hostname=${NAME}" -d "mac=${MAC}" http://127.0.0.1:3000/register &> /dev/null
 
 virsh console ${NAME}
-sleep 1
+sleep 3
 virsh start ${NAME} --console
 
