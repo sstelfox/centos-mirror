@@ -19,10 +19,8 @@ virt-install --connect qemu:///system --name "${NAME}" --ram "${RAM}" \
   --virt-type=kvm --accelerate --console=pty --memballoon=virtio --autostart \
   --check-cpu --noautoconsole
 
-MAC=$(virsh dumpxml "${NAME}" | grep 'mac address' | grep -Eio '[0-9a-f:]{17}')
-
 sleep 2
 virsh console ${NAME}
-sleep 3
+sleep 2
 virsh start ${NAME} --console
 

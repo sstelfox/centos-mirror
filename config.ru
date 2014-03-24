@@ -201,6 +201,7 @@ name=Local ELRepo.org Community Enterprise Linux Repository - el6
 baseurl=http://10.64.89.1:3000/repo/epel/6/$basearch/
 enabled=1
 gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
 protect=0
 exclude=postgresql*
 
@@ -209,6 +210,7 @@ name=Local Puppet Labs Products El 6 - $basearch
 baseurl=http://10.64.89.1:3000/repo/puppet/yum/el/6/products/$basearch
 enabled=1
 gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs
 exclude=postgresql*
 
 [local-puppetlabs-deps]
@@ -216,6 +218,7 @@ name=Local Puppet Labs Dependencies El 6 - $basearch
 baseurl=http://10.64.89.1:3000/repo/puppet/yum/el/6/dependencies/$basearch
 enabled=1
 gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs
 exclude=postgresql*
 
 [local-pgdg93]
@@ -223,7 +226,12 @@ name=Local PostgreSQL 9.3 $releasever - $basearch
 baseurl=http://10.64.89.1:3000/repo/postgresql/9.3/redhat/rhel-$releasever-$basearch
 enabled=1
 gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG-93
 EOR
+
+wget http://10.64.89.1:3000/RPM-GPG-KEY-PGDG-93 -O /etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG-93
+wget http://10.64.89.1:3000/RPM-GPG-KEY-elrepo.org -O /etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
+wget http://10.64.89.1:3000/RPM-GPG-KEY-puppetlabs -O /etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs
 
 rpm --import http://10.64.89.1:3000/RPM-GPG-KEY-PGDG-93
 rpm --import http://10.64.89.1:3000/RPM-GPG-KEY-elrepo.org
