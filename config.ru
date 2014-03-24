@@ -65,13 +65,7 @@ get '/default-ks.cfg' do
   mac = mac.split[1].downcase.gsub(':', '') if mac
 
   os = (request.env.to_h['HTTP_X_ANACONDA_SYSTEM_RELEASE'] || 'unknown').downcase
-
-  if File.exists?("./hosts/#{mac}.json")
-    content = JSON.parse(File.read("./hosts/#{mac}.json"), symbolize_names: true)
-    hostname = "#{content[:hostname]}.cent.0x378.net"
-  else
-    hostname = ([os, mac].join('-')) + '.cent.0x378.net'
-  end
+  hostname = [(params[:hostname] || mac), os, '0x378.net'].join('.')
 
   erb :kickstart, :locals => {host_data: Host.new(hostname, request.ip)}
 end
@@ -91,22 +85,6 @@ put '/escrow_update' do
   content = JSON.pretty_generate(host)
   File.write(file_name, content)
   content
-end
-
-post '/register' do
-  return [400, "Missing required parameter"] unless params[:mac] && params[:hostname]
-
-  short_mac = params[:mac].downcase.gsub(':', '')
-  content = {
-    ip: request.ip,
-    hostname: params[:hostname],
-    mac: params[:mac]
-  }
-
-  File.write("./hosts/#{short_mac}.json", JSON.pretty_generate(content))
-  FileUtils.ln_s("#{short_mac}.json", "hosts/latest.json", :force => true)
-
-  [200, "Wrote out host."]
 end
 
 get '*' do
