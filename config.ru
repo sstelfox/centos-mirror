@@ -229,9 +229,9 @@ gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG-93
 EOR
 
-wget http://10.64.89.1:3000/RPM-GPG-KEY-PGDG-93 -O /etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG-93
-wget http://10.64.89.1:3000/RPM-GPG-KEY-elrepo.org -O /etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
-wget http://10.64.89.1:3000/RPM-GPG-KEY-puppetlabs -O /etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs
+curl http://10.64.89.1:3000/RPM-GPG-KEY-PGDG-93 > /etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG-93
+curl http://10.64.89.1:3000/RPM-GPG-KEY-elrepo.org > /etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
+curl http://10.64.89.1:3000/RPM-GPG-KEY-puppetlabs > /etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs
 
 rpm --import http://10.64.89.1:3000/RPM-GPG-KEY-PGDG-93
 rpm --import http://10.64.89.1:3000/RPM-GPG-KEY-elrepo.org
