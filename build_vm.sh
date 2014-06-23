@@ -5,9 +5,9 @@ set -o errtrace
 set -o nounset
 
 NAME=${1}
-DISK_SIZE=${2:-15}
-RAM=${3:-512}
-CPUS=${4:-1}
+DISK_SIZE=${2:-20}
+RAM=${3:-4096}
+CPUS=${4:-2}
 
 virt-install --connect qemu:///system --name "${NAME}" --ram "${RAM}" \
   --arch x86_64 --vcpus "${CPUS}" --security type=dynamic \
