@@ -116,7 +116,7 @@ lang en_US.UTF-8
 timezone --utc UTC
 firstboot --disabled
 
-logging --host=10.64.89.1 --port=514 --level=debug
+#logging --host=10.64.89.1 --port=514 --level=debug
 
 url --url='http://10.64.89.1:3000/repo/centos/6.5/os/x86_64/'
 repo --name='Local CentOS' --baseurl='http://10.64.89.1:3000/repo/centos/6.5/os/x86_64/' --cost='100'
@@ -145,11 +145,11 @@ volgroup vg_primary --pesize=4096 pv.31337
 # more is recommended.
 logvol swap           --name=lv_swap   --vgname=vg_primary --size=1024
 logvol /              --name=lv_root   --vgname=vg_primary --size=4096 --fstype=ext4
-logvol /home          --name=lv_home   --vgname=vg_primary --size=1024 --fstype=ext4
 logvol /tmp           --name=lv_tmp    --vgname=vg_primary --size=1024 --fstype=ext4
 logvol /var/log/audit --name=lv_audit  --vgname=vg_primary --size=1024 --fstype=ext4
 logvol /var/log       --name=lv_varlog --vgname=vg_primary --size=1024 --fstype=ext4
-logvol /var           --name=lv_var    --vgname=vg_primary --size=1024 --fstype=ext4 --grow
+logvol /var           --name=lv_var    --vgname=vg_primary --size=1024 --fstype=ext4
+logvol /home          --name=lv_home   --vgname=vg_primary --size=1024 --fstype=ext4 --grow
 
 reboot
 
@@ -180,21 +180,24 @@ name=Local CentOS-$releasever - Extras
 baseurl=http://10.64.89.1:3000/repo/centos/6.5/extras/$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
-exclude=postgresql*
+#exclude=postgresql*
+enabled=0
 
 [local-centosplus]
 name=Local CentOS-$releasever - Plus
 baseurl=http://10.64.89.1:3000/repo/centos/6.5/centosplus/$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
-exclude=postgresql*
+#exclude=postgresql*
+enabled=0
 
 [local-contrib]
 name=Local CentOS-$releasever - Contrib
 baseurl=http://10.64.89.1:3000/repo/centos/6.5/contrib/$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
-exclude=postgresql*
+#exclude=postgresql*
+enabled=0
 
 [local-elrepo]
 name=Local ELRepo.org Community Enterprise Linux Repository - el6
@@ -203,7 +206,8 @@ enabled=1
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
 protect=0
-exclude=postgresql*
+#exclude=postgresql*
+enabled=0
 
 [local-puppetlabs-products]
 name=Local Puppet Labs Products El 6 - $basearch
@@ -211,7 +215,8 @@ baseurl=http://10.64.89.1:3000/repo/puppet/yum/el/6/products/$basearch
 enabled=1
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs
-exclude=postgresql*
+#exclude=postgresql*
+enabled=0
 
 [local-puppetlabs-deps]
 name=Local Puppet Labs Dependencies El 6 - $basearch
@@ -219,7 +224,8 @@ baseurl=http://10.64.89.1:3000/repo/puppet/yum/el/6/dependencies/$basearch
 enabled=1
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs
-exclude=postgresql*
+#exclude=postgresql*
+enabled=0
 
 [local-pgdg93]
 name=Local PostgreSQL 9.3 $releasever - $basearch
@@ -227,15 +233,16 @@ baseurl=http://10.64.89.1:3000/repo/postgresql/9.3/redhat/rhel-$releasever-$base
 enabled=1
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG-93
+enabled=0
 EOR
 
-curl http://10.64.89.1:3000/RPM-GPG-KEY-PGDG-93 > /etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG-93
-curl http://10.64.89.1:3000/RPM-GPG-KEY-elrepo.org > /etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
-curl http://10.64.89.1:3000/RPM-GPG-KEY-puppetlabs > /etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs
+#curl http://10.64.89.1:3000/RPM-GPG-KEY-PGDG-93 > /etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG-93
+#curl http://10.64.89.1:3000/RPM-GPG-KEY-elrepo.org > /etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org
+#curl http://10.64.89.1:3000/RPM-GPG-KEY-puppetlabs > /etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs
 
-rpm --import http://10.64.89.1:3000/RPM-GPG-KEY-PGDG-93
-rpm --import http://10.64.89.1:3000/RPM-GPG-KEY-elrepo.org
-rpm --import http://10.64.89.1:3000/RPM-GPG-KEY-puppetlabs
+#rpm --import http://10.64.89.1:3000/RPM-GPG-KEY-PGDG-93
+#rpm --import http://10.64.89.1:3000/RPM-GPG-KEY-elrepo.org
+#rpm --import http://10.64.89.1:3000/RPM-GPG-KEY-puppetlabs
 
 for escrow_name in $(echo /root/*escrow*); do
   cat $escrow_name | base64 -w 0 | curl -X PUT -d @- 'http://10.64.89.1:3000/escrow_update?name='${escrow_name}'&host='$(hostname) &> /dev/null
@@ -249,14 +256,10 @@ chmod 0700 /root/.ssh
 chown root:root /root/.ssh
 cat > /root/.ssh/authorized_keys << EOK
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDXUDvlxSdKo7ZkdQGnAeccgSeb+/VnMxI9Nj0gVpjckyaWI8rPOI8CeMVwz4yi6RCmyCovwVY2kNwp6DVql/fqv9WTMl75Ckpq89Y96VfO3btzw4ktJhGWWXdlZO8UcfMqNgWGBLF3KeFJe1Kzkf8OOxugC86AJzXbPLvXiJ3JYh6RgnW2DThzLEo+WdV6oI0IwFKMKXx4IKuC3HhGs9T1xuTVUoUEuxl3aIxDDmeValtPKHxEkMx02oVBR9l0QF958ehtk9/ir9mqSpvc0aHxs+xdWE35R39D649elRlnYyZxx/Hb/9Pb76mtI9mYtcOBB39g3kjv0QqJUJdNjgfHfFTdTY0w7JHaLDT3MubNwvW2cFfdxy0gI8Ucfxi4io+zgUP2UEnTax4uXbyXcy2L6W1TFP4lK8akhDkYe9sFSpcCkZfT68c8SQCDit20Mml9bpCkJg4AX2/OMc7vVvsdcfF/5MZdrZQXbdzi8M3V/YoB293mWpu/IL+BjdWgwF3MhQfO8oTZXjBXkaVKufNnoF1chKO4xzXMoA45wOfl6GD1ErLXs7mFsIg2Ulsc7RlAnQuP8QcPACZ2Gu7o7TcFO3HvhjrK9wqjLyK1sgqATwn8Uo/zTkVLmMWpMKXgsNVqRVfAhyDat0ASSI7b/daDMr31U+T/xDTByfAXyGj1+Q==
-ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBKNN3/CwifgmhtiXwl49+ToWWSDRL+R+/0c74FFuVnbWnU+d3XmDvUK/Ib/vS4r2hKSvLFe1Gr0uWzsSbC/lOY0=
+ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBKNN3/CwifgmhtiXwl49+ToWWSDRL+R+/0c74FFuVnbWnU+d3XmDvUK/Ib/vS4r2hKSvLFe1Gr0uWzsSbC/lOY0= sstelfox@procrustes.i.0x378.net
 EOK
 chmod 0600 /root/.ssh/authorized_keys
 chown root:root /root/.ssh/authorized_keys
-
-yum install augeas puppet -y
-echo '10.64.89.47 puppet-01.cent.0x378.net' >> /etc/hosts
-puppet agent --test --server=puppet-01.cent.0x378.net --waitforcert 30
 
 %end
   EOF

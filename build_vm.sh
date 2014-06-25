@@ -4,6 +4,11 @@ set -o errexit
 set -o errtrace
 set -o nounset
 
+if [ $EUID -ne 0 ]; then
+  sudo $0 $@
+  exit $?
+fi
+
 NAME=${1}
 DISK_SIZE=${2:-20}
 RAM=${3:-4096}
