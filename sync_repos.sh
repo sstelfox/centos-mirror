@@ -6,11 +6,23 @@ rsync --progress -h -av --delete --delete-excluded --exclude "SRPMS" \
   --exclude="SCL" --exclude="xen4" --exclude="*debuginfo*.rpm" \
   rsync://mirrors.kernel.org/centos/6.5/ ./repo/centos/6.5/
 
+mkdir -p ./repo/centos/7/
+rsync --progress -h -av --delete --delete-excluded --exclude "SRPMS" \
+  --exclude="ppc64" --exclude "local*" --exclude "isos" --exclude "i386" \
+  --exclude="SCL" --exclude="xen4" --exclude="*debuginfo*.rpm" \
+  rsync://mirrors.kernel.org/centos/7/ ./repo/centos/7/
+
 mkdir -p ./repo/epel/6/
 rsync --progress -h -av --delete --delete-excluded --exclude "SRPMS" \
   --exclude="ppc64" --exclude "local*" --exclude "isos" --exclude "i386" \
   --exclude="*debuginfo*.rpm" \
   rsync://mirror.pnl.gov/epel/6/ ./repo/epel/6/
+
+mkdir -p ./repo/epel/7/
+rsync --progress -h -av --delete --delete-excluded --exclude "SRPMS" \
+  --exclude="ppc64" --exclude "local*" --exclude "isos" --exclude "i386" \
+  --exclude="*debuginfo*.rpm" \
+  rsync://mirror.pnl.gov/epel/beta/7/ ./repo/epel/7/
 
 mkdir -p ./repo/puppet/
 rsync --progress -h -avxH --exclude "apt*" --exclude "i386" --exclude "SRPMS" \
